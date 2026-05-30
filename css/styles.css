@@ -723,6 +723,40 @@ body{font-family:'Google Sans',sans-serif;color:var(--t1);-webkit-tap-highlight-
   border-radius:8px;height:14px;
 }
 
+/* ── PROFILE ACCOUNT SECTION ───────────────────── */
+.prof-account-card{
+  display:flex;align-items:center;gap:14px;
+  padding:14px;background:var(--glass-md);
+  border:1px solid var(--glass-border);border-radius:var(--radius-sm);
+}
+.prof-avatar{
+  width:46px;height:46px;border-radius:50%;background:var(--gem-grad);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Google Sans Display',sans-serif;font-size:16px;font-weight:500;
+  color:#fff;flex-shrink:0;box-shadow:0 2px 12px rgba(167,139,250,0.4);
+}
+.prof-account-info{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.prof-account-name{font-size:15px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.prof-account-email{font-size:12px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.prof-account-cta{
+  padding:16px;background:var(--glass);
+  border:1px solid var(--glass-border);border-radius:var(--radius-sm);
+  display:flex;flex-direction:column;gap:14px;
+}
+.prof-account-cta-text{font-size:14px;color:var(--t2);line-height:1.55;}
+.prof-account-btns{display:flex;align-items:center;gap:12px;}
+.prof-auth-link{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:11px 22px;background:var(--gem-grad);border:none;
+  border-radius:var(--radius-sm);color:#fff;
+  font-family:'Google Sans',sans-serif;font-size:14px;font-weight:500;
+  text-decoration:none;box-shadow:0 3px 14px rgba(167,139,250,0.3);
+  transition:transform .15s;
+}
+.prof-auth-link:active{transform:scale(0.97);}
+.prof-auth-link-sec{font-size:14px;color:var(--accent);font-weight:500;text-decoration:none;}
+.prof-auth-link-sec:hover{text-decoration:underline;}
+
 /* ── SAFE AREA / UTILITIES ─────────────────────── */
 @supports(padding-bottom: env(safe-area-inset-bottom)){
   .bot-nav{padding-bottom:max(8px, env(safe-area-inset-bottom));}

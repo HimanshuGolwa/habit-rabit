@@ -79,14 +79,8 @@ function renderProfile() {
         <div class="prof-version" style="margin-top:4px;">The best thing you can do, right now.</div>
       </div>
 
-      <!-- Login placeholder -->
-      <div class="prof-section" style="opacity:0.5;">
-        <div class="prof-section-title">Account (coming soon)</div>
-        <div class="prof-row" style="border:none;">
-          <div class="prof-row-lbl">Sign in to sync your data across devices</div>
-        </div>
-        <button class="prof-save-btn" disabled style="opacity:0.5;width:100%;cursor:not-allowed;">Sign in with Google</button>
-      </div>
+      <!-- Account -->
+      ${renderAccountSection()}
     </div>
   `;
 }
@@ -143,4 +137,48 @@ function clearData() {
   if (!confirm('Clear ALL data? This cannot be undone.')) return;
   localStorage.clear();
   location.reload();
+}
+
+// ── ACCOUNT SECTION ───────────────────────────────
+function renderAccountSection() {
+  const session = Auth.getSession();
+
+  if (session) {
+    const initials = (session.name || session.email || '?')
+      .split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    return `
+      <div class="prof-section">
+        <div class="prof-section-title">Account</div>
+        <div class="prof-account-card">
+          <div class="prof-avatar">${initials}</div>
+          <div class="prof-account-info">
+            <div class="prof-account-name">${session.name || 'User'}</div>
+            <div class="prof-account-email">${session.email || ''}</div>
+          </div>
+        </div>
+        <div class="prof-row" style="border:none;margin-top:12px;">
+          <button class="prof-danger-btn" onclick="signOut()" style="width:100%;margin:0;">
+            Sign out
+          </button>
+        </div>
+      </div>`;
+  }
+
+  return `
+    <div class="prof-section">
+      <div class="prof-section-title">Account</div>
+      <div class="prof-account-cta">
+        <div class="prof-account-cta-text">Sign in to sync your habits and streaks across devices.</div>
+        <div class="prof-account-btns">
+          <a class="prof-save-btn prof-auth-link" href="login.html">Sign in</a>
+          <a class="prof-auth-link-sec" href="signup.html">Create account</a>
+        </div>
+      </div>
+    </div>`;
+}
+
+function signOut() {
+  if (!confirm('Sign out of your account?')) return;
+  Auth.clearSession();
+  renderProfile();
 }
