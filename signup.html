@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <meta name="theme-color" content="#08080f"/>
+  <title>Create account — Habit Rabit</title>
+  <link rel="stylesheet" href="css/auth.css"/>
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml"/>
+</head>
+<body>
+
+<div class="auth-page">
+  <div class="auth-card">
+
+    <!-- Logo -->
+    <div class="auth-logo">
+      <svg class="auth-logo-icon" viewBox="0 0 80 80" fill="none">
+        <ellipse cx="40" cy="28" rx="10" ry="14" stroke="url(#as)" stroke-width="2.5"/>
+        <ellipse cx="28" cy="14" rx="5"  ry="9"  stroke="url(#as)" stroke-width="2"/>
+        <ellipse cx="52" cy="14" rx="5"  ry="9"  stroke="url(#as)" stroke-width="2"/>
+        <circle  cx="40" cy="46" r="16"           stroke="url(#as)" stroke-width="2.5"/>
+        <circle  cx="35" cy="43" r="2"   fill="url(#as)"/>
+        <circle  cx="45" cy="43" r="2"   fill="url(#as)"/>
+        <path d="M35 51 Q40 55 45 51" stroke="url(#as)" stroke-width="2" stroke-linecap="round"/>
+        <ellipse cx="28" cy="58" rx="6" ry="4" stroke="url(#as)" stroke-width="1.5"/>
+        <ellipse cx="52" cy="58" rx="6" ry="4" stroke="url(#as)" stroke-width="1.5"/>
+        <defs>
+          <linearGradient id="as" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+            <stop offset="0%"   stop-color="#a78bfa"/>
+            <stop offset="100%" stop-color="#60a5fa"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <span class="auth-logo-name">Habit Rabit</span>
+    </div>
+
+    <h1 class="auth-heading">Create account</h1>
+    <p class="auth-sub">Start building habits that stick.</p>
+
+    <form class="auth-form" id="signup-form" onsubmit="handleSignup(event)" novalidate>
+
+      <!-- Name -->
+      <div class="auth-field">
+        <label class="auth-label" for="signup-name">Your name</label>
+        <div class="auth-input-wrap">
+          <input class="auth-input" id="signup-name" type="text"
+                 placeholder="What should we call you?" autocomplete="name" required/>
+          <span class="auth-input-icon">
+            <svg viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.4"/>
+              <path d="M3 17c0-3.31 3.13-6 7-6s7 2.69 7 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="auth-field">
+        <label class="auth-label" for="signup-email">Email</label>
+        <div class="auth-input-wrap">
+          <input class="auth-input" id="signup-email" type="email"
+                 placeholder="you@example.com" autocomplete="email" required/>
+          <span class="auth-input-icon">
+            <svg viewBox="0 0 20 20" fill="none">
+              <rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.4"/>
+              <path d="M2 7l8 5 8-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="auth-field">
+        <label class="auth-label" for="signup-password">Password</label>
+        <div class="auth-input-wrap">
+          <input class="auth-input pw" id="signup-password" type="password"
+                 placeholder="Min. 8 characters" autocomplete="new-password"
+                 oninput="updateStrength(this.value)" required/>
+          <button type="button" class="toggle-pw" id="signup-pw-toggle"
+                  onclick="togglePassword('signup-password','signup-pw-toggle')" aria-label="Show password">
+            <svg viewBox="0 0 20 20" fill="none">
+              <path d="M10 4C5 4 2 10 2 10s3 6 8 6 8-6 8-6-3-6-8-6z" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </button>
+        </div>
+        <!-- Strength meter -->
+        <div class="pw-strength" id="pw-strength" aria-hidden="true">
+          <div class="pw-bar" id="pb1"></div>
+          <div class="pw-bar" id="pb2"></div>
+          <div class="pw-bar" id="pb3"></div>
+          <div class="pw-bar" id="pb4"></div>
+        </div>
+      </div>
+
+      <!-- Confirm password -->
+      <div class="auth-field">
+        <label class="auth-label" for="signup-confirm">Confirm password</label>
+        <div class="auth-input-wrap">
+          <input class="auth-input pw" id="signup-confirm" type="password"
+                 placeholder="Re-enter password" autocomplete="new-password" required/>
+          <button type="button" class="toggle-pw" id="signup-confirm-toggle"
+                  onclick="togglePassword('signup-confirm','signup-confirm-toggle')" aria-label="Show password">
+            <svg viewBox="0 0 20 20" fill="none">
+              <path d="M10 4C5 4 2 10 2 10s3 6 8 6 8-6 8-6-3-6-8-6z" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div class="auth-error" id="signup-error" role="alert"></div>
+
+      <!-- Submit -->
+      <button class="auth-submit" id="signup-btn" type="submit">Create account</button>
+
+      <!-- Divider -->
+      <div class="auth-divider">or</div>
+
+      <!-- Google (stub) -->
+      <button class="auth-social-btn" type="button" disabled title="Coming soon">
+        <svg viewBox="0 0 20 20" fill="none">
+          <path d="M18.17 10.2c0-.64-.06-1.25-.16-1.84H10v3.48h4.59a3.92 3.92 0 0 1-1.7 2.57v2.14h2.75c1.6-1.48 2.53-3.65 2.53-6.35z" fill="#4285F4"/>
+          <path d="M10 18.5c2.3 0 4.23-.76 5.64-2.06l-2.75-2.14c-.76.51-1.74.81-2.89.81-2.22 0-4.1-1.5-4.77-3.52H2.38v2.21A8.5 8.5 0 0 0 10 18.5z" fill="#34A853"/>
+          <path d="M5.23 11.59A5.1 5.1 0 0 1 4.96 10c0-.55.1-1.09.27-1.59V6.2H2.38A8.5 8.5 0 0 0 1.5 10c0 1.37.33 2.66.88 3.8l2.85-2.21z" fill="#FBBC05"/>
+          <path d="M10 4.89c1.25 0 2.37.43 3.25 1.27l2.44-2.44C14.22 2.34 12.3 1.5 10 1.5A8.5 8.5 0 0 0 2.38 6.2l2.85 2.21C5.9 6.4 7.78 4.89 10 4.89z" fill="#EA4335"/>
+        </svg>
+        Continue with Google (coming soon)
+      </button>
+
+    </form>
+
+    <p class="auth-footer">
+      Already have an account? <a href="login.html">Sign in</a>
+    </p>
+
+  </div>
+</div>
+
+<script src="js/auth.js"></script>
+<script>
+// Password strength meter (signup page only)
+function updateStrength(val) {
+  const bars   = ['pb1','pb2','pb3','pb4'];
+  const levels = ['weak','fair','good','strong'];
+  let score = 0;
+  if (val.length >= 8)              score++;
+  if (/[A-Z]/.test(val))           score++;
+  if (/[0-9]/.test(val))           score++;
+  if (/[^A-Za-z0-9]/.test(val))    score++;
+
+  bars.forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.className = 'pw-bar';
+    if (i < score) el.classList.add(levels[score - 1]);
+  });
+}
+</script>
+</body>
+</html>
