@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+  <meta name="theme-color" content="#0d0d0d"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Habit Rabit"/>
+  <title>Habit Rabit</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml"/>
+  <link rel="apple-touch-icon" href="assets/icon.svg"/>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Display:wght@400;500;700&family=Google+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- ONBOARDING (shown first time only) -->
+  <div class="onboard-wrap" id="onboard-wrap">
+    <div class="onboard-slides">
+      <div class="onboard-slide active" id="ob-0">
+        <div class="ob-icon">
+          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="40" cy="28" rx="10" ry="14" stroke="url(#og)" stroke-width="2.5"/>
+            <ellipse cx="28" cy="14" rx="5" ry="9" stroke="url(#og)" stroke-width="2"/>
+            <ellipse cx="52" cy="14" rx="5" ry="9" stroke="url(#og)" stroke-width="2"/>
+            <circle cx="40" cy="46" r="16" stroke="url(#og)" stroke-width="2.5"/>
+            <circle cx="35" cy="43" r="2" fill="url(#og)"/>
+            <circle cx="45" cy="43" r="2" fill="url(#og)"/>
+            <path d="M35 51 Q40 55 45 51" stroke="url(#og)" stroke-width="2" stroke-linecap="round"/>
+            <ellipse cx="28" cy="58" rx="6" ry="4" stroke="url(#og)" stroke-width="1.5"/>
+            <ellipse cx="52" cy="58" rx="6" ry="4" stroke="url(#og)" stroke-width="1.5"/>
+            <defs>
+              <linearGradient id="og" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#a78bfa"/>
+                <stop offset="100%" stop-color="#60a5fa"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="ob-title">Meet Habit Rabit</div>
+        <div class="ob-sub">Your daily action coach. Not a to-do list — a decision engine that tells you the <em>best</em> thing to do right now.</div>
+      </div>
+      <div class="onboard-slide" id="ob-1">
+        <div class="ob-icon ob-icon-energy">
+          <svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="28" stroke="url(#og2)" stroke-width="2.5"/><path d="M44 20 L32 42 H40 L36 60 L52 36 H44 Z" fill="url(#og2)"/><defs><linearGradient id="og2" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient></defs></svg>
+        </div>
+        <div class="ob-title">Pick your energy</div>
+        <div class="ob-sub">High, medium, or low — your energy level shapes every recommendation. No more forcing yourself through an intense workout when you're running on empty.</div>
+      </div>
+      <div class="onboard-slide" id="ob-2">
+        <div class="ob-icon">
+          <svg viewBox="0 0 80 80" fill="none"><rect x="16" y="16" width="20" height="20" rx="4" stroke="url(#og3)" stroke-width="2.5"/><rect x="44" y="16" width="20" height="20" rx="4" stroke="url(#og3)" stroke-width="2.5"/><rect x="16" y="44" width="20" height="20" rx="4" stroke="url(#og3)" stroke-width="2.5"/><rect x="44" y="44" width="20" height="20" rx="4" stroke="url(#og3)" stroke-width="2.5"/><defs><linearGradient id="og3" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient></defs></svg>
+        </div>
+        <div class="ob-title">Choose a life area</div>
+        <div class="ob-sub">Health, work, relationships, learning — pick what needs attention. The AI gives you one clear action, tailored to your moment.</div>
+      </div>
+    </div>
+    <div class="ob-dots">
+      <span class="ob-dot active" id="odd-0"></span>
+      <span class="ob-dot" id="odd-1"></span>
+      <span class="ob-dot" id="odd-2"></span>
+    </div>
+    <button class="ob-btn" id="ob-next-btn" onclick="obNext()">Next</button>
+    <button class="ob-skip" onclick="obDone()">Skip</button>
+  </div>
+
+  <!-- HEADER -->
+  <div class="hdr fu" id="hdr">
+    <div class="hdr-l">
+      <div class="h-greeting"><span id="g-txt">Good morning</span>, <span class="h-name" id="h-name-disp">Rabbit</span></div>
+      <div class="h-question">What matters <span class="grad-txt">right now?</span></div>
+    </div>
+    <div class="hdr-r">
+      <div class="wx-chip" id="wx-chip">
+        <span id="wx-icon-txt">—</span>
+        <span id="wx-temp">–°</span>
+      </div>
+      <div class="clock-wrap">
+        <span id="clk">12:00</span>
+        <span id="clk-ampm">PM</span>
+      </div>
+      <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- DAILY INTENTION BANNER (Phase 4) -->
+  <div class="intention-bar fu2" id="intention-bar">
+    <div class="intention-yesterday" id="intention-yesterday" style="display:none"></div>
+    <div class="intention-input-row">
+      <input class="intention-input" id="intention-input" type="text" placeholder="Set your intention for today…" maxlength="120"/>
+      <button class="intention-save-btn" onclick="saveIntention()">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M4 10l5 5 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- TAB CONTENT -->
+  <div class="tab-body" id="tab-body">
+
+    <!-- HOME TAB -->
+    <div class="tab-pane active" id="tab-home">
+
+      <!-- Summary card (Phase 4) -->
+      <div class="summary-card fu3" id="summary-card">
+        <div class="sum-item">
+          <div class="sum-val" id="sum-done">0</div>
+          <div class="sum-lbl">done today</div>
+        </div>
+        <div class="sum-divider"></div>
+        <div class="sum-item">
+          <div class="sum-val" id="sum-streak">0</div>
+          <div class="sum-lbl">best streak</div>
+        </div>
+        <div class="sum-divider"></div>
+        <div class="sum-item">
+          <div class="sum-val" id="sum-habits">0</div>
+          <div class="sum-lbl">habits</div>
+        </div>
+      </div>
+
+      <!-- Energy selector -->
+      <div class="section-label">Your energy right now</div>
+      <div class="energy-row fu3" id="energy-row">
+        <button class="e-btn" data-e="high" onclick="setEnergy('high')">
+          <svg class="e-icon" viewBox="0 0 24 24" fill="none"><path d="M13 3L5 13h7l-1 8 8-10h-7l1-8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          <span>High</span>
+        </button>
+        <button class="e-btn" data-e="medium" onclick="setEnergy('medium')">
+          <svg class="e-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><path d="M9 12h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span>Medium</span>
+        </button>
+        <button class="e-btn" data-e="low" onclick="setEnergy('low')">
+          <svg class="e-icon" viewBox="0 0 24 24" fill="none"><path d="M12 4v8M8 18c0-2.21 1.79-4 4-4s4 1.79 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span>Low</span>
+        </button>
+      </div>
+
+      <!-- Area selector -->
+      <div class="section-label">Life area</div>
+      <div class="area-grid fu4" id="area-grid"></div>
+      <button class="add-area-btn" onclick="openAddArea()">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Add area
+      </button>
+
+      <!-- Go button -->
+      <button class="go-btn" id="go-btn" onclick="getAIRec()" disabled>
+        <span id="go-btn-txt">Pick energy level first</span>
+      </button>
+
+      <!-- AI Recommendation card -->
+      <div class="rec-card fu5" id="rec-card" style="display:none">
+        <div class="rec-header">
+          <span class="rec-label">Recommended action</span>
+          <button class="rec-refresh" onclick="getAIRec()" title="Get new recommendation">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M4 10a6 6 0 0112 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16 10a6 6 0 01-12 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4 7l-.5 3-3-.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 13l.5-3 3 .5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="rec-body" id="rec-body">Loading…</div>
+        <div class="rec-duration" id="rec-duration"></div>
+        <div class="rec-timer-row" id="rec-timer-row" style="display:none">
+          <button class="timer-start-btn" id="timer-start-btn" onclick="startTimer()">Start timer</button>
+        </div>
+      </div>
+
+      <!-- Quote -->
+      <div class="quote-wrap fu6" id="quote-wrap">
+        <div class="quote-txt" id="quote-txt"></div>
+      </div>
+
+    </div>
+
+    <!-- HABITS TAB -->
+    <div class="tab-pane" id="tab-habits">
+      <div class="habits-header">
+        <div class="section-label" style="margin:0">Your habits</div>
+        <button class="add-habit-btn" onclick="openAddHabit()">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          New habit
+        </button>
+      </div>
+      <div id="habit-list"></div>
+    </div>
+
+    <!-- PROFILE TAB -->
+    <div class="tab-pane" id="tab-profile">
+      <div id="profile-content"></div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bot-nav" id="bot-nav">
+    <button class="nav-btn active" data-tab="home" onclick="switchTab('home')">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3 12L12 4l9 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="nav-btn" data-tab="habits" onclick="switchTab('habits')">
+      <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Habits</span>
+    </button>
+    <button class="nav-btn" data-tab="profile" onclick="switchTab('profile')">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span>Profile</span>
+    </button>
+  </nav>
+
+  <!-- FULLSCREEN TIMER OVERLAY -->
+  <div class="timer-overlay" id="timer-overlay" style="display:none">
+    <div class="timer-inner">
+      <div class="timer-task" id="timer-task-label"></div>
+      <div class="timer-ring-wrap">
+        <svg class="timer-ring" viewBox="0 0 220 220">
+          <circle cx="110" cy="110" r="95" class="ring-bg"/>
+          <circle cx="110" cy="110" r="95" class="ring-prog" id="ring-prog"/>
+        </svg>
+        <div class="timer-time-disp" id="timer-time-disp">25:00</div>
+      </div>
+      <div class="timer-controls">
+        <button class="tc-btn" onclick="pauseTimer()">
+          <svg id="tc-pause-icon" viewBox="0 0 24 24" fill="none"><rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor"/><rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor"/></svg>
+        </button>
+        <button class="tc-btn tc-reset" onclick="resetTimer()">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 018-8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4 9V5H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <button class="timer-close-btn" onclick="closeTimer()">Done</button>
+    </div>
+  </div>
+
+  <!-- ADD AREA MODAL -->
+  <div class="modal-overlay" id="add-area-modal" style="display:none" onclick="closeModal('add-area-modal')">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-title">New life area</div>
+      <input class="modal-input" id="area-name-in" type="text" placeholder="Area name (e.g. DSA prep)" maxlength="30"/>
+      <div class="modal-label">Emoji or icon</div>
+      <div class="emoji-grid" id="emoji-grid"></div>
+      <div class="modal-label">Tell the AI what this area is about <span class="required-badge">required</span></div>
+      <textarea class="modal-textarea" id="area-context-in" placeholder="e.g. I'm preparing for Google interviews by solving one LeetCode problem daily. Focus on graphs, trees, and dynamic programming." rows="3" maxlength="200"></textarea>
+      <div class="modal-hint">This helps the AI give you relevant, specific recommendations.</div>
+      <button class="modal-btn" onclick="saveArea()">Add area</button>
+      <button class="modal-cancel" onclick="closeModal('add-area-modal')">Cancel</button>
+    </div>
+  </div>
+
+  <!-- ADD HABIT MODAL -->
+  <div class="modal-overlay" id="add-habit-modal" style="display:none" onclick="closeModal('add-habit-modal')">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-title">New habit</div>
+      <input class="modal-input" id="habit-name-in" type="text" placeholder="Habit name" maxlength="40"/>
+      <input class="modal-input" id="habit-emoji-in" type="text" placeholder="Icon (emoji optional)" maxlength="2"/>
+      <button class="modal-btn" onclick="saveHabit()">Add habit</button>
+      <button class="modal-cancel" onclick="closeModal('add-habit-modal')">Cancel</button>
+    </div>
+  </div>
+
+  <!-- HABIT DETAIL SHEET -->
+  <div class="modal-overlay" id="habit-detail-modal" style="display:none" onclick="closeModal('habit-detail-modal')">
+    <div class="modal-sheet modal-sheet-tall" onclick="event.stopPropagation()">
+      <div class="detail-header">
+        <div class="detail-title" id="detail-title"></div>
+        <button class="modal-close-x" onclick="closeModal('habit-detail-modal')">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="detail-stats" id="detail-stats"></div>
+      <div class="detail-tabs">
+        <button class="dtab active" data-dtab="month" onclick="switchDetailTab('month')">Month</button>
+        <button class="dtab" data-dtab="year" onclick="switchDetailTab('year')">Year</button>
+        <button class="dtab" data-dtab="notes" onclick="switchDetailTab('notes')">Notes</button>
+      </div>
+      <div class="detail-body" id="detail-body"></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/habits.js"></script>
+<script src="js/timer.js"></script>
+<script src="js/profile.js"></script>
+</body>
+</html>
