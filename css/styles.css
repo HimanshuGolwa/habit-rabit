@@ -318,6 +318,12 @@ body{font-family:'Google Sans',sans-serif;color:var(--t1);-webkit-tap-highlight-
 .rec-refresh:hover{color:var(--accent);border-color:rgba(167,139,250,0.4);}
 .rec-refresh svg{width:15px;height:15px;}
 .rec-body{font-size:15px;line-height:1.65;color:var(--t1);}
+.rec-title{
+  font-family:'Google Sans Display',sans-serif;
+  font-size:19px;font-weight:500;line-height:1.25;
+  color:var(--t1);margin-bottom:8px;
+}
+.rec-text{font-size:15px;line-height:1.65;color:var(--t2);}
 
 /* ── REC ACTION BAR (timer) ────────────────────── */
 .rec-action-bar{
