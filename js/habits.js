@@ -2,6 +2,7 @@
 let habits = S.get('habits', []);
 let detailHabitId = null;
 let currentDetailTab = 'month';
+let selectedHabitArea = null;
 
 function saveHabits() { S.set('habits', habits); }
 
@@ -9,7 +10,7 @@ function saveHabits() { S.set('habits', habits); }
 function renderHabits() {
   const el = document.getElementById('habit-list');
   if (!habits.length) {
-    el.innerHTML = '<div style="text-align:center;color:var(--t3);padding:40px 0;font-size:14px;">No habits yet. Add your first one.</div>';
+    el.innerHTML = '<div style="text-align:center;color:var(--t3);padding:48px 0;font-size:14px;">No habits yet. Add your first one.</div>';
     return;
   }
 
@@ -23,19 +24,21 @@ function renderHabits() {
 
   el.innerHTML = habits.map(h => {
     const streak = getCurrentStreak(h.log || []);
+    const area = h.areaId ? getAllAreas().find(a => a.id === h.areaId) : null;
     return `
     <div class="habit-card" id="hcard-${h.id}">
       <div class="habit-card-top" onclick="openHabitDetail('${h.id}')">
-        <div class="habit-name">${h.icon || ''} ${h.name}</div>
+        <div>
+          <div class="habit-name">${h.icon || ''} ${h.name}</div>
+          ${area ? `<div class="habit-area-badge"><span class="hab-area-icon">${area.icon}</span>${area.label}</div>` : ''}
+        </div>
         ${streak > 1 ? `<div class="habit-streak">${streak} day streak</div>` : ''}
       </div>
       <div class="habit-week">
         ${week.map((d, i) => `
           <div class="week-dot ${(h.log || []).includes(d) ? 'done' : ''}"
                onclick="event.stopPropagation();toggleDay('${h.id}','${d}')"
-               title="${d}">
-            ${dayLabels[i]}
-          </div>
+               title="${d}">${dayLabels[i]}</div>
         `).join('')}
       </div>
       <div class="habit-actions">
@@ -101,14 +104,39 @@ function deleteHabit(id) {
 function openAddHabit() {
   document.getElementById('habit-name-in').value = '';
   document.getElementById('habit-emoji-in').value = '';
+  selectedHabitArea = null;
+
+  // Render area pills
+  const scroll = document.getElementById('habit-area-scroll');
+  const areas = getAllAreas();
+  scroll.innerHTML = areas.map(a => `
+    <button class="habit-area-pill" data-aid="${a.id}" onclick="pickHabitArea('${a.id}')">
+      <span class="hab-area-icon">${a.icon}</span>
+      ${a.label}
+    </button>
+  `).join('');
+
   openModal('add-habit-modal');
+}
+
+function pickHabitArea(id) {
+  selectedHabitArea = selectedHabitArea === id ? null : id;
+  document.querySelectorAll('.habit-area-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.aid === selectedHabitArea);
+  });
 }
 
 function saveHabit() {
   const name = document.getElementById('habit-name-in').value.trim();
   if (!name) { alert('Please enter a habit name.'); return; }
   const icon = document.getElementById('habit-emoji-in').value.trim() || '';
-  habits.push({ id: 'h_' + Date.now(), name, icon, log: [] });
+  habits.push({
+    id: 'h_' + Date.now(),
+    name,
+    icon,
+    areaId: selectedHabitArea || null,
+    log: []
+  });
   saveHabits();
   closeModal('add-habit-modal');
   renderHabits();
@@ -124,7 +152,6 @@ function openHabitDetail(id) {
 
   document.getElementById('detail-title').textContent = `${h.icon || ''} ${h.name}`;
 
-  // Stats
   const log = h.log || [];
   const cur = getCurrentStreak(log);
   const best = getBestStreakForHabit(log);
@@ -139,7 +166,6 @@ function openHabitDetail(id) {
     <div class="dstat"><div class="dstat-val">${rate}%</div><div class="dstat-lbl">Completion</div></div>
   `;
 
-  // Reset tabs
   document.querySelectorAll('.dtab').forEach(t => t.classList.toggle('active', t.dataset.dtab === 'month'));
   renderDetailBody();
   openModal('habit-detail-modal');
@@ -157,13 +183,9 @@ function renderDetailBody() {
   const body = document.getElementById('detail-body');
   const log = h.log || [];
 
-  if (currentDetailTab === 'month') {
-    body.innerHTML = renderMonthCal(log);
-  } else if (currentDetailTab === 'year') {
-    body.innerHTML = renderYearGrid(log);
-  } else {
-    body.innerHTML = renderNotes(h);
-  }
+  if (currentDetailTab === 'month') body.innerHTML = renderMonthCal(log);
+  else if (currentDetailTab === 'year') body.innerHTML = renderYearGrid(log);
+  else body.innerHTML = renderNotes(h);
 }
 
 // ── MONTH CALENDAR ────────────────────────────────
@@ -175,15 +197,15 @@ function renderMonthCal(log) {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const monthName = now.toLocaleString('default', { month: 'long' });
 
-  let html = `<div style="text-align:center;font-size:13px;color:var(--t2);margin-bottom:10px;">${monthName} ${year}</div>`;
-  html += '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;margin-bottom:6px;">';
+  let html = `<div class="cal-month-label">${monthName} ${year}</div>`;
+  html += '<div class="cal-header-row">';
   ['S','M','T','W','T','F','S'].forEach(d => {
-    html += `<div style="font-size:9px;color:var(--t3);padding:2px 0;">${d}</div>`;
+    html += `<div class="cal-header-cell">${d}</div>`;
   });
   html += '</div><div class="cal-grid">';
   for (let i = 0; i < firstDay; i++) html += '<div class="cal-cell"></div>';
   for (let d = 1; d <= daysInMonth; d++) {
-    const ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const ds = `${year}-${String(month + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const done = log.includes(ds);
     const today = ds === todayStr;
     html += `<div class="cal-cell ${done ? 'done' : ''} ${today ? 'today' : ''}">${d}</div>`;
@@ -199,8 +221,7 @@ function renderYearGrid(log) {
     const d = new Date(today); d.setDate(d.getDate() - i);
     const ds = d.toISOString().slice(0, 10);
     const done = log.includes(ds);
-    const count = log.filter(l => l === ds).length;
-    cells.push(`<div class="year-cell ${done ? (count > 1 ? 'done-hi' : 'done') : ''}" title="${ds}"></div>`);
+    cells.push(`<div class="year-cell ${done ? 'done' : ''}" title="${ds}"></div>`);
   }
   return `<div class="year-grid">${cells.join('')}</div>`;
 }
@@ -208,17 +229,48 @@ function renderYearGrid(log) {
 // ── NOTES ─────────────────────────────────────────
 function renderNotes(h) {
   const notes = S.get('notes_' + h.id, []);
+  const todayStr = new Date().toISOString().slice(0, 10);
+
+  const energyBadge = (e) => {
+    if (!e) return '';
+    return `<span class="energy-badge energy-${e}">${e}</span>`;
+  };
+
+  const formatNoteDate = (ts) => {
+    const d = new Date(ts);
+    const ds = d.toISOString().slice(0, 10);
+    if (ds === todayStr) return 'Today';
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    if (ds === yesterday) return 'Yesterday';
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  };
+
+  const noteItems = [...notes].reverse().map(n => `
+    <div class="note-item">
+      <div class="note-meta">
+        <span class="note-date">${formatNoteDate(n.ts)}</span>
+        ${energyBadge(n.energy)}
+      </div>
+      <div class="note-text">${n.text}</div>
+    </div>
+  `).join('');
+
+  // Show current energy label in the input row
+  const curEnergy = typeof selEnergy !== 'undefined' && selEnergy
+    ? `<span class="note-energy-tag energy-${selEnergy}">Logging as: ${selEnergy}</span>`
+    : '';
+
   return `
     <div class="note-add-row">
-      <input class="note-input" id="note-in-${h.id}" type="text" placeholder="Add a note for today…" maxlength="200"/>
-      <button class="note-save-btn" onclick="saveNote('${h.id}')">Save</button>
-    </div>
-    ${notes.length ? notes.map((n, i) => `
-      <div class="note-item">
-        <div class="note-date">${new Date(n.ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
-        <div class="note-text">${n.text}</div>
+      <div class="note-input-wrap">
+        ${curEnergy}
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input class="note-input" id="note-in-${h.id}" type="text" placeholder="Add a note for today…" maxlength="200"/>
+          <button class="note-save-btn" onclick="saveNote('${h.id}')">Save</button>
+        </div>
       </div>
-    `).reverse().join('') : '<div style="color:var(--t3);font-size:13px;padding:16px 0;">No notes yet.</div>'}
+    </div>
+    ${noteItems || '<div class="notes-empty">No notes yet. Add one above.</div>'}
   `;
 }
 
@@ -227,7 +279,8 @@ function saveNote(id) {
   const text = input.value.trim();
   if (!text) return;
   const notes = S.get('notes_' + id, []);
-  notes.push({ ts: Date.now(), text });
+  const energy = typeof selEnergy !== 'undefined' ? selEnergy : null;
+  notes.push({ ts: Date.now(), text, energy });
   S.set('notes_' + id, notes);
   input.value = '';
   renderDetailBody();
