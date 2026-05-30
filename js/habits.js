@@ -3,6 +3,7 @@ let habits = S.get('habits', []);
 let detailHabitId = null;
 let currentDetailTab = 'month';
 let selectedHabitArea = null;
+let noteEnergy = null;
 
 function saveHabits() { S.set('habits', habits); }
 
@@ -228,6 +229,7 @@ function renderYearGrid(log) {
 
 // ── NOTES ─────────────────────────────────────────
 function renderNotes(h) {
+  noteEnergy = null; // reset picker each time notes tab is opened
   const notes = S.get('notes_' + h.id, []);
   const todayStr = new Date().toISOString().slice(0, 10);
 
@@ -255,23 +257,33 @@ function renderNotes(h) {
     </div>
   `).join('');
 
-  // Show current energy label in the input row
-  const curEnergy = typeof selEnergy !== 'undefined' && selEnergy
-    ? `<span class="note-energy-tag energy-${selEnergy}">Logging as: ${selEnergy}</span>`
-    : '';
+  const energyLevels = ['depleted', 'low', 'medium', 'high'];
 
   return `
-    <div class="note-add-row">
-      <div class="note-input-wrap">
-        ${curEnergy}
-        <div style="display:flex;gap:8px;align-items:center;">
-          <input class="note-input" id="note-in-${h.id}" type="text" placeholder="Add a note for today…" maxlength="200"/>
-          <button class="note-save-btn" onclick="saveNote('${h.id}')">Save</button>
-        </div>
+    <div class="note-add-section">
+      <div class="note-energy-label">Energy when done</div>
+      <div class="note-energy-picker" id="note-energy-picker">
+        ${energyLevels.map(e => `
+          <button class="note-energy-pill energy-pill-${e}" data-e="${e}" onclick="pickNoteEnergy('${e}')">
+            ${e}
+          </button>
+        `).join('')}
+      </div>
+      <div class="note-input-row">
+        <input class="note-input" id="note-in-${h.id}" type="text" placeholder="Add a note for today…" maxlength="200"
+               onkeydown="if(event.key==='Enter') saveNote('${h.id}')"/>
+        <button class="note-save-btn" onclick="saveNote('${h.id}')">Save note</button>
       </div>
     </div>
     ${noteItems || '<div class="notes-empty">No notes yet. Add one above.</div>'}
   `;
+}
+
+function pickNoteEnergy(level) {
+  noteEnergy = level;
+  document.querySelectorAll('.note-energy-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.e === level);
+  });
 }
 
 function saveNote(id) {
@@ -279,7 +291,7 @@ function saveNote(id) {
   const text = input.value.trim();
   if (!text) return;
   const notes = S.get('notes_' + id, []);
-  const energy = typeof selEnergy !== 'undefined' ? selEnergy : null;
+  const energy = noteEnergy;
   notes.push({ ts: Date.now(), text, energy });
   S.set('notes_' + id, notes);
   input.value = '';
