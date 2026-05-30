@@ -182,15 +182,8 @@
 
         <!-- Timer preset picker (shown when pill is tapped) -->
         <div class="timer-presets" id="timer-presets" style="display:none">
-          <div class="preset-row">
-            <button class="preset-btn" data-m="5"  onclick="setPresetTimer(5)">5</button>
-            <button class="preset-btn" data-m="10" onclick="setPresetTimer(10)">10</button>
-            <button class="preset-btn" data-m="15" onclick="setPresetTimer(15)">15</button>
-            <button class="preset-btn" data-m="20" onclick="setPresetTimer(20)">20</button>
-            <button class="preset-btn" data-m="25" onclick="setPresetTimer(25)">25</button>
-            <button class="preset-btn" data-m="30" onclick="setPresetTimer(30)">30</button>
-            <button class="preset-btn" data-m="45" onclick="setPresetTimer(45)">45</button>
-            <button class="preset-btn" data-m="60" onclick="setPresetTimer(60)">60</button>
+          <div class="preset-row" id="preset-row">
+            <!-- 3 smart presets built dynamically: shorter / recommended / longer -->
           </div>
           <div class="custom-timer-row">
             <input class="custom-mins-in" id="custom-mins-in" type="number" min="1" max="180" placeholder="—"/>
