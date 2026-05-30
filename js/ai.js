@@ -118,9 +118,25 @@ function getLocalRec() {
   const alts     = shuffled.slice(1, 4);
 
   return {
-    main:         { text: main.text, minutes: main.mins },
+    main:         { label: main.label, text: main.text, minutes: main.mins },
     alternatives: alts.map(r => ({ label: r.label, text: r.text, minutes: r.mins })),
   };
+}
+
+// ── RENDER REC BODY (heading + text) ──────────────────────────────────────────
+function renderRecBody(label, text) {
+  const body = document.getElementById('rec-body');
+  body.innerHTML = '';
+  if (label) {
+    const h = document.createElement('div');
+    h.className = 'rec-title';
+    h.textContent = label;
+    body.appendChild(h);
+  }
+  const p = document.createElement('div');
+  p.className = 'rec-text';
+  p.textContent = text;
+  body.appendChild(p);
 }
 
 // ── MAIN REC FLOW ─────────────────────────────────────────────────────────────
@@ -146,7 +162,7 @@ async function getAIRec() {
   await new Promise(r => setTimeout(r, 350)); // shimmer feels intentional
 
   const result = getLocalRec();
-  recBody.textContent = result.main.text;
+  renderRecBody(result.main.label, result.main.text);
   applyTimerValues(result.main.minutes);
   actionBar.style.display = 'flex';
 
@@ -172,7 +188,7 @@ function renderAlternatives() {
 function selectAlt(idx) {
   const alt = currentAlts[idx];
   if (!alt) return;
-  document.getElementById('rec-body').textContent = alt.text;
+  renderRecBody(alt.label, alt.text);
   applyTimerValues(alt.minutes);
   document.querySelectorAll('.rec-alt-card').forEach((el, i) => {
     el.classList.toggle('active', i === idx);
