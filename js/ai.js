@@ -14,71 +14,174 @@ function formatMins(mins) {
   return `${mins} min`;
 }
 
-// ── PROMPT ────────────────────────────────────────
-function buildPrompt() {
+// ── SMART PRESET LOGIC ────────────────────────────
+const SNAP_POINTS = [1, 2, 3, 5, 7, 10, 12, 15, 20, 25, 30, 40, 45, 50, 60, 75, 90, 120];
+
+function snapToNice(n) {
+  return SNAP_POINTS.reduce((a, b) => Math.abs(b - n) < Math.abs(a - n) ? b : a);
+}
+
+function getSmartPresets(recMins) {
+  let lower = snapToNice(Math.max(1, Math.round(recMins * 0.5)));
+  let higher = snapToNice(Math.round(recMins * 1.8));
+
+  // Ensure no collision with the rec time
+  if (lower === recMins) lower = snapToNice(recMins * 0.4);
+  if (higher === recMins) higher = snapToNice(recMins * 2.2);
+  // Last resort: simple arithmetic offsets
+  if (lower === recMins) lower = Math.max(1, recMins - 5);
+  if (higher === recMins) higher = recMins + 10;
+
+  return [lower, recMins, higher];
+}
+
+function buildTimerPresets(recMins) {
+  const row = document.getElementById('preset-row');
+  if (!row) return;
+  const [lower, exact, higher] = getSmartPresets(recMins);
+
+  row.innerHTML = [
+    { m: lower,  label: formatMins(lower),  tag: 'Shorter',       isRec: false },
+    { m: exact,  label: formatMins(exact),  tag: 'Recommended',   isRec: true  },
+    { m: higher, label: formatMins(higher), tag: 'Longer',        isRec: false },
+  ].map(p => `
+    <button class="preset-btn ${p.isRec ? 'preset-rec' : ''}"
+            data-m="${p.m}" onclick="setPresetTimer(${p.m})">
+      <span class="preset-time">${p.label}</span>
+      <span class="preset-tag">${p.tag}</span>
+    </button>
+  `).join('');
+}
+
+// ── APPLY TIMER VALUES ────────────────────────────
+function applyTimerValues(mins) {
+  document.getElementById('rec-time-txt').textContent = formatMins(mins);
+  document.getElementById('timer-start-btn').dataset.mins = mins;
+  buildTimerPresets(mins);
+  // Highlight the active preset button
+  document.querySelectorAll('.preset-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.m) === mins);
+  });
+}
+
+// ── RICH CONTEXT BUILDER ──────────────────────────
+function buildContext() {
   const now = new Date();
   const hour = now.getHours();
-  const timeLabel = hour < 6 ? `late night (~${hour}am)` :
-    hour < 12 ? `morning (~${hour}am)` :
-    hour < 17 ? `afternoon (~${hour}pm)` :
-    hour < 21 ? `evening (~${hour - 12}pm)` :
-    `night (~${hour - 12}pm)`;
+  const day = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][now.getDay()];
+  const isWeekend = now.getDay() === 0 || now.getDay() === 6;
+  const month = now.getMonth(); // 0-11
 
-  let timeContext = '';
-  if (hour >= 21 || hour < 5) {
-    timeContext = 'It is late night. ONLY recommend sleep prep, breathing, journaling, gentle stretching. NO intense work or exercise.';
-  } else if (hour >= 5 && hour < 8) {
-    timeContext = 'It is early morning. Recommend energizing, grounding activities.';
-  } else if (hour >= 12 && hour < 14) {
-    timeContext = 'It is midday — consider a proper break or short walk.';
+  // Precise time-of-day label
+  const timeSlot =
+    hour < 5  ? 'late night'       :
+    hour < 7  ? 'early morning'    :
+    hour < 10 ? 'morning'          :
+    hour < 12 ? 'mid-morning'      :
+    hour < 14 ? 'midday'           :
+    hour < 17 ? 'afternoon'        :
+    hour < 19 ? 'early evening'    :
+    hour < 21 ? 'evening'          : 'night';
+
+  // Time constraint rules
+  let timeConstraint = '';
+  if (hour >= 22 || hour < 5) {
+    timeConstraint = 'VERY LATE — only sleep-prep, breathwork, or journaling. Absolutely no stimulating work or exercise.';
+  } else if (hour >= 5 && hour < 7) {
+    timeConstraint = 'Early morning window — ideal for movement, meditation, planning, or a nourishing breakfast.';
+  } else if (hour >= 12 && hour < 13) {
+    timeConstraint = 'Midday break — prioritise a real meal, a short walk, or eyes-off-screen rest before the afternoon.';
+  } else if (hour >= 20) {
+    timeConstraint = 'Wind-down time — avoid anything that spikes cortisol. Prefer reading, light stretching, or journaling.';
   }
 
-  let wxContext = '';
+  // Day context
+  const dayCtx = isWeekend
+    ? `It is ${day} — a weekend. The user may have more unstructured time; personal projects, rest, and social activities fit well.`
+    : `It is ${day} — a weekday. Structure, focus blocks, and career/learning tasks resonate more on weekdays.`;
+
+  // Season
+  const season = month >= 2 && month <= 4 ? 'spring' :
+                 month >= 5 && month <= 7 ? 'summer' :
+                 month >= 8 && month <= 10 ? 'autumn' : 'winter';
+
+  // Weather context
+  let wxCtx = '';
   if (weatherData) {
     const { temp, code } = weatherData;
-    if (code >= 51 && code <= 99) wxContext = 'Raining outside — prefer indoor activities.';
-    else if (temp > 30) wxContext = 'Very hot outside — avoid intense outdoor exercise.';
-    else if (temp < 5) wxContext = 'Cold outside — lean toward indoor alternatives.';
-    if (wxContext) wxContext += ` Temperature: ${temp}°C.`;
+    const isRainy  = code >= 51 && code <= 99;
+    const isCloudy = code >= 1  && code <= 3;
+    const isClear  = code === 0;
+    const isHot    = temp > 30;
+    const isWarm   = temp >= 18 && temp <= 30;
+    const isCool   = temp >= 8  && temp < 18;
+    const isCold   = temp < 8;
+
+    if (isRainy)        wxCtx = `Raining outside (${temp}°C). Lean into indoor, cosy activities.`;
+    else if (isHot)     wxCtx = `Very hot outside (${temp}°C). Avoid outdoor exertion; hydration matters.`;
+    else if (isCold)    wxCtx = `Cold outside (${temp}°C). Warm, indoor activities are more appealing.`;
+    else if (isClear && isWarm) wxCtx = `Clear and pleasant (${temp}°C). Outdoor options are genuinely attractive right now.`;
+    else if (isCool)    wxCtx = `Cool and ${isCloudy ? 'overcast' : 'clear'} (${temp}°C).`;
+    else                wxCtx = `${temp}°C outside.`;
   }
 
-  const area = getAllAreas().find(a => a.id === selArea);
-  const areaContext = area ? `Neglected area: ${area.label}. Context: ${area.context}` : `Area: ${selArea}`;
-
+  // Energy descriptions
   const energyDesc = {
-    depleted: 'completely drained — recommend only the most gentle 5-minute micro-action',
-    low: 'low energy — easy wins under 15 minutes',
-    medium: 'moderate energy — focused 20–30 minute effort',
-    high: 'high energy — ambitious 30–60 minute challenge'
+    depleted: 'completely drained — micro-actions only (≤5 min), nothing cognitively or physically demanding',
+    low:      'low energy — gentle, achievable tasks (5–15 min); wins that cost little but still count',
+    medium:   'moderate energy — focused, intentional effort (20–30 min); the user can sustain real concentration',
+    high:     'high, sharp energy — ambitious, challenging work (30–60 min); this is a peak window',
   };
 
-  return `You are a personal action coach. Give ONE main recommendation plus THREE distinct alternatives.
+  const area = getAllAreas().find(a => a.id === selArea);
+  const areaCtx = area
+    ? `Neglected area: ${area.label}. Context: ${area.context}`
+    : `Area: ${selArea}`;
 
-User state:
+  return { timeSlot, hour, timeConstraint, dayCtx, season, wxCtx, energyDesc, areaCtx };
+}
+
+// ── PROMPT ────────────────────────────────────────
+function buildPrompt() {
+  const { timeSlot, hour, timeConstraint, dayCtx, season, wxCtx, energyDesc, areaCtx } = buildContext();
+
+  return `You are a sharp, warm personal action coach with a knack for the perfect recommendation at the perfect moment.
+
+User snapshot:
 - Energy: ${selEnergy} (${energyDesc[selEnergy] || selEnergy})
-- Time: ${timeLabel}
-- ${areaContext}
-${timeContext ? `- Constraint: ${timeContext}` : ''}
-${wxContext ? `- Weather: ${wxContext}` : ''}
+- Time: ${timeSlot} (hour ${hour})
+- ${dayCtx}
+- Season: ${season}
+- ${areaCtx}
+${timeConstraint ? `- Time rule: ${timeConstraint}` : ''}
+${wxCtx ? `- Weather: ${wxCtx}` : ''}
 
-Rules:
-1. Main rec: specific, doable NOW, under 60 words, warm/conversational, MUST include a duration ("for X minutes")
-2. 3 alternatives: each different from the main and from each other, varying durations
-3. For depleted energy: max 5 min, ultra-gentle only
-4. For low energy: max 15 min
-5. No bullet points — flowing text for main and alt texts
-6. No intense exercise late at night
+Craft ONE main recommendation + THREE distinct alternatives.
 
-Return ONLY a valid JSON object — no markdown, no backticks, no explanation:
+Main recommendation rules:
+1. Specific, actionable, doable right now
+2. MUST mention a duration ("for X minutes" or "for X hours")
+3. Under 65 words, warm and conversational — no jargon or bullet points
+4. Respect energy and time constraints strictly
+5. Use the weather, day, and season to make it feel alive and contextual
+
+Three alternatives — make them genuinely different:
+- alt[0]: a QUICK option — fastest way to make progress (few minutes)
+- alt[1]: a DIFFERENT approach — different modality or angle than the main
+- alt[2]: a DEEPER option — more time or effort for when the user wants more
+
+Each alt: 3–5 word label + full description (≤50 words) + specific duration.
+
+Return ONLY a valid JSON object — no markdown, no backticks, no commentary:
 {
   "main": {
-    "text": "full recommendation text with duration mentioned",
+    "text": "full recommendation with duration",
     "minutes": <integer>
   },
   "alternatives": [
-    {"label": "3-5 word title", "text": "full alternative text (under 50 words) with duration", "minutes": <integer>},
-    {"label": "3-5 word title", "text": "full alternative text (under 50 words) with duration", "minutes": <integer>},
-    {"label": "3-5 word title", "text": "full alternative text (under 50 words) with duration", "minutes": <integer>}
+    {"label": "3-5 word title", "text": "full alt text with duration (≤50 words)", "minutes": <integer>},
+    {"label": "3-5 word title", "text": "full alt text with duration (≤50 words)", "minutes": <integer>},
+    {"label": "3-5 word title", "text": "full alt text with duration (≤50 words)", "minutes": <integer>}
   ]
 }`;
 }
@@ -106,7 +209,7 @@ async function getAIRec() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1200,
+        max_tokens: 1600,
         messages: [{ role: 'user', content: buildPrompt() }]
       })
     });
@@ -116,11 +219,9 @@ async function getAIRec() {
 
     let parsed;
     try {
-      // Strip markdown fences if the model wraps with ```json
       const clean = rawText.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
       parsed = JSON.parse(clean);
     } catch {
-      // Fallback: treat entire text as the main recommendation
       parsed = {
         main: { text: rawText || getFallback(), minutes: ENERGY_DEFAULTS[selEnergy] || 25 },
         alternatives: []
@@ -138,29 +239,17 @@ async function getAIRec() {
     renderAlternatives();
 
   } catch (err) {
-    const fallback = getFallback();
-    recBody.textContent = fallback;
+    recBody.textContent = getFallback();
     applyTimerValues(ENERGY_DEFAULTS[selEnergy] || 25);
     actionBar.style.display = 'flex';
     console.error('AI error:', err);
   }
 }
 
-// ── APPLY TIMER VALUES ────────────────────────────
-function applyTimerValues(mins) {
-  document.getElementById('rec-time-txt').textContent = formatMins(mins);
-  document.getElementById('timer-start-btn').dataset.mins = mins;
-  // Sync preset highlights
-  document.querySelectorAll('.preset-btn').forEach(b => {
-    b.classList.toggle('active', parseInt(b.dataset.m) === mins);
-  });
-}
-
 // ── ALTERNATIVES ──────────────────────────────────
 function renderAlternatives() {
   const altsEl   = document.getElementById('rec-alts');
   const altsList = document.getElementById('rec-alts-list');
-
   if (!currentAlts.length) { altsEl.style.display = 'none'; return; }
 
   altsList.innerHTML = currentAlts.map((alt, idx) => `
@@ -176,15 +265,11 @@ function renderAlternatives() {
 function selectAlt(idx) {
   const alt = currentAlts[idx];
   if (!alt) return;
-
   document.getElementById('rec-body').textContent = alt.text || alt.label;
   applyTimerValues(alt.minutes || ENERGY_DEFAULTS[selEnergy] || 25);
-
   document.querySelectorAll('.rec-alt-card').forEach((el, i) => {
     el.classList.toggle('active', i === idx);
   });
-
-  // Close presets if open
   document.getElementById('timer-presets').style.display = 'none';
 }
 
@@ -197,7 +282,6 @@ function toggleTimerEdit() {
 function setPresetTimer(mins) {
   applyTimerValues(mins);
   document.getElementById('custom-mins-in').value = '';
-  // Don't auto-close so user can see what they picked
 }
 
 function setCustomTimer() {
