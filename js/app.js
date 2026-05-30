@@ -20,19 +20,47 @@ let prefs = S.get('prefs', {
 let weatherData = null;
 let currentTab = 'home';
 
-// Default areas
+// ── AREA SVG ICONS ─────────────────────────────────
+const AREA_ICONS = {
+  health: `<svg viewBox="0 0 24 24" fill="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
+  work: `<svg viewBox="0 0 24 24" fill="none"><rect x="2" y="7" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+  learning: `<svg viewBox="0 0 24 24" fill="none"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
+  relationships: `<svg viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+  mindfulness: `<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M8 14s1.5 2 4 2 4-2 4-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="9" y1="9" x2="9.01" y2="9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="15" y1="9" x2="15.01" y2="9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  creativity: `<svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
+};
+
+// ── DEFAULT AREAS ─────────────────────────────────
 const DEFAULT_AREAS = [
-  { id: 'health', label: 'Health', icon: '🫀', context: 'Physical health, fitness, exercise, nutrition and body care.' },
-  { id: 'work', label: 'Work', icon: '💼', context: 'Professional tasks, productivity, career growth and deadlines.' },
-  { id: 'learning', label: 'Learning', icon: '📖', context: 'Studying, reading, skill building and personal development.' },
-  { id: 'relationships', label: 'Social', icon: '🤝', context: 'Friends, family, communication and social connections.' },
-  { id: 'mindfulness', label: 'Mind', icon: '🧘', context: 'Mental health, meditation, stress relief and emotional wellbeing.' },
-  { id: 'creativity', label: 'Create', icon: '🎨', context: 'Creative projects, art, writing, music and self-expression.' },
+  { id: 'health',        label: 'Health',   icon: AREA_ICONS.health,        context: 'Physical health, fitness, exercise, nutrition and body care.' },
+  { id: 'work',          label: 'Work',     icon: AREA_ICONS.work,          context: 'Professional tasks, productivity, career growth and deadlines.' },
+  { id: 'learning',      label: 'Learning', icon: AREA_ICONS.learning,      context: 'Studying, reading, skill building and personal development.' },
+  { id: 'relationships', label: 'Social',   icon: AREA_ICONS.relationships, context: 'Friends, family, communication and social connections.' },
+  { id: 'mindfulness',   label: 'Mind',     icon: AREA_ICONS.mindfulness,   context: 'Mental health, meditation, stress relief and emotional wellbeing.' },
+  { id: 'creativity',    label: 'Create',   icon: AREA_ICONS.creativity,    context: 'Creative projects, art, writing, music and self-expression.' },
 ];
 let customAreas = S.get('customAreas', []);
-let selectedAreaEmoji = '✨';
 
-const EMOJI_OPTIONS = ['✨','🎯','💡','🔥','⚡','🌱','🏆','🧠','💻','🎵','📝','🌍','💪','🛠️','🎮'];
+// ── ICON OPTIONS (for custom area picker) ─────────
+const ICON_OPTIONS = [
+  `<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none"><path d="M9 21h6M12 3a6 6 0 0 1 6 6c0 2.22-1.21 4.16-3 5.2V17a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-2.8A6 6 0 0 1 6 9a6 6 0 0 1 6-6z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 17c0 1.66-1.34 3-3 3s-3-1.34-3-3c0-1.07.57-2.01 1.41-2.53M16 5c.5 2-1 4-3 4-1.5 0-2.5-1-2.5-2.5 0-1 .5-1.5 1-2-2 0-4 3-4 6.5 0 4.5 3.5 7.5 6.5 7.5 3.5 0 7-2.5 7-7 0-3.5-2-5.5-4-6.5z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none"><path d="M17 8C8 10 5.9 16.17 3.82 19.82a1 1 0 0 0 1.6 1.18C7.19 18.89 13 16 19 14c.86-3.01 1-6 0-9-1 .5-1.5 1-2 3z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 22L11 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none"><path d="M6 9H3.5a2.5 2.5 0 0 0 0 5H6M18 9h2.5a2.5 2.5 0 0 1 0 5H18M6 3h12v10a6 6 0 0 1-6 6v0a6 6 0 0 1-6-6V3zM9 21h6M12 19v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none"><polyline points="16,18 22,12 16,6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><polyline points="8,6 2,12 8,18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none"><path d="M9 18V5l12-2v13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="1.8"/><circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="1.8"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M3 12h18M12 3c-2 2.5-3 5.5-3 9s1 6.5 3 9M12 3c2 2.5 3 5.5 3 9s-1 6.5-3 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.8"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v5l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+];
+
+let selectedAreaIcon = ICON_OPTIONS[0];
 
 const QUOTES = [
   "Small steps every day lead to big changes.",
@@ -89,8 +117,8 @@ function fetchWeather() {
       .then(d => {
         const w = d.current_weather;
         weatherData = { temp: Math.round(w.temperature), code: w.weathercode, wind: Math.round(w.windspeed) };
-        const icons = { 0: '☀️', 1: '🌤', 2: '⛅', 3: '☁️', 45: '🌫', 61: '🌧', 63: '🌧', 80: '🌦', 95: '⛈' };
-        const icon = icons[w.weathercode] || '🌡';
+        const icons = { 0: '☀', 1: '🌤', 2: '⛅', 3: '☁', 45: '🌫', 61: '🌧', 63: '🌧', 80: '🌦', 95: '⛈' };
+        const icon = icons[w.weathercode] || '—';
         document.getElementById('wx-icon-txt').textContent = icon;
         document.getElementById('wx-temp').textContent = `${weatherData.temp}°`;
         updateSummaryCard();
@@ -133,7 +161,7 @@ function renderAreas() {
     <div class="area-card ${selArea === a.id ? 'active' : ''}" onclick="pickArea('${a.id}')">
       ${a.neglected ? '<div class="area-neglected-dot"></div>' : ''}
       <div class="area-icon">${a.icon}</div>
-      <div>${a.label}</div>
+      <div class="area-label">${a.label}</div>
     </div>
   `).join('');
 }
@@ -148,8 +176,8 @@ function pickArea(id) {
 function updateGoBtn() {
   const btn = document.getElementById('go-btn');
   const txt = document.getElementById('go-btn-txt');
-  if (!selEnergy) { txt.textContent = 'Pick energy level first'; btn.disabled = true; }
-  else if (!selArea) { txt.textContent = 'Pick a life area'; btn.disabled = true; }
+  if (!selEnergy) { txt.textContent = 'Pick your energy first'; btn.disabled = true; }
+  else if (!selArea) { txt.textContent = 'Pick a neglected area'; btn.disabled = true; }
   else { txt.textContent = 'Get my action'; btn.disabled = false; }
 }
 
@@ -157,18 +185,18 @@ function updateGoBtn() {
 function openAddArea() {
   document.getElementById('area-name-in').value = '';
   document.getElementById('area-context-in').value = '';
-  selectedAreaEmoji = '✨';
+  selectedAreaIcon = ICON_OPTIONS[0];
   const grid = document.getElementById('emoji-grid');
-  grid.innerHTML = EMOJI_OPTIONS.map(e =>
-    `<div class="emoji-opt ${e === selectedAreaEmoji ? 'active' : ''}" onclick="pickEmoji('${e}')">${e}</div>`
+  grid.innerHTML = ICON_OPTIONS.map((svg, idx) =>
+    `<div class="emoji-opt ${idx === 0 ? 'active' : ''}" onclick="pickEmoji(${idx})">${svg}</div>`
   ).join('');
   openModal('add-area-modal');
 }
 
-function pickEmoji(e) {
-  selectedAreaEmoji = e;
-  document.querySelectorAll('.emoji-opt').forEach(el => {
-    el.classList.toggle('active', el.textContent === e);
+function pickEmoji(idx) {
+  selectedAreaIcon = ICON_OPTIONS[idx];
+  document.querySelectorAll('.emoji-opt').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
   });
 }
 
@@ -178,7 +206,7 @@ function saveArea() {
   if (!name) { alert('Please enter an area name.'); return; }
   if (!ctx) { alert('Please add context so the AI can give you relevant recommendations.'); return; }
   const id = 'custom_' + Date.now();
-  customAreas.push({ id, label: name, icon: selectedAreaEmoji, context: ctx });
+  customAreas.push({ id, label: name, icon: selectedAreaIcon, context: ctx });
   S.set('customAreas', customAreas);
   closeModal('add-area-modal');
   renderAreas();
@@ -277,12 +305,10 @@ function obDone() {
   showQuote();
   fetchWeather();
 
-  // Apply name
   const name = S.get('prefs', {}).name || 'Rabbit';
   const nameEl = document.getElementById('h-name-disp');
   if (nameEl) nameEl.textContent = name || 'Rabbit';
 
-  // Restore selections
   const le = selEnergy || prefs.defEnergy;
   const la = selArea || prefs.defArea;
   if (le) setEnergy(le);
@@ -292,7 +318,6 @@ function obDone() {
   updateSummaryCard();
   loadIntention();
 
-  // Onboarding
   if (!S.get('onboarded', false)) {
     document.getElementById('onboard-wrap').style.display = 'flex';
   } else {

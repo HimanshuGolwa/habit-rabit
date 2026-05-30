@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-  <meta name="theme-color" content="#0d0d0d"/>
+  <meta name="theme-color" content="#08080f"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="Habit Rabit"/>
@@ -17,7 +17,7 @@
 
 <div class="app" id="app">
 
-  <!-- ONBOARDING (shown first time only) -->
+  <!-- ONBOARDING -->
   <div class="onboard-wrap" id="onboard-wrap">
     <div class="onboard-slides">
       <div class="onboard-slide active" id="ob-0">
@@ -48,14 +48,14 @@
           <svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="28" stroke="url(#og2)" stroke-width="2.5"/><path d="M44 20 L32 42 H40 L36 60 L52 36 H44 Z" fill="url(#og2)"/><defs><linearGradient id="og2" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient></defs></svg>
         </div>
         <div class="ob-title">Pick your energy</div>
-        <div class="ob-sub">High, medium, or low — your energy level shapes every recommendation. No more forcing yourself through an intense workout when you're running on empty.</div>
+        <div class="ob-sub">Depleted, low, medium, or high — your energy level shapes every recommendation. No more forcing yourself through an intense workout when you're running on empty.</div>
       </div>
       <div class="onboard-slide" id="ob-2">
         <div class="ob-icon">
           <svg viewBox="0 0 80 80" fill="none"><rect x="16" y="16" width="20" height="20" rx="4" stroke="url(#og3)" stroke-width="2.5"/><rect x="44" y="16" width="20" height="20" rx="4" stroke="url(#og3)" stroke-width="2.5"/><rect x="16" y="44" width="20" height="20" rx="4" stroke="url(#og3)" stroke-width="2.5"/><rect x="44" y="44" width="20" height="20" rx="4" stroke="url(#og3)" stroke-width="2.5"/><defs><linearGradient id="og3" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient></defs></svg>
         </div>
-        <div class="ob-title">Choose a life area</div>
-        <div class="ob-sub">Health, work, relationships, learning — pick what needs attention. The AI gives you one clear action, tailored to your moment.</div>
+        <div class="ob-title">Neglected areas</div>
+        <div class="ob-sub">Health, work, relationships, learning — pick what's been neglected. The AI gives you one clear action, tailored to your moment.</div>
       </div>
     </div>
     <div class="ob-dots">
@@ -88,7 +88,7 @@
     </div>
   </div>
 
-  <!-- DAILY INTENTION BANNER (Phase 4) -->
+  <!-- DAILY INTENTION BANNER -->
   <div class="intention-bar fu2" id="intention-bar">
     <div class="intention-yesterday" id="intention-yesterday" style="display:none"></div>
     <div class="intention-input-row">
@@ -105,7 +105,7 @@
     <!-- HOME TAB -->
     <div class="tab-pane active" id="tab-home">
 
-      <!-- Summary card (Phase 4) -->
+      <!-- Summary card -->
       <div class="summary-card fu3" id="summary-card">
         <div class="sum-item">
           <div class="sum-val" id="sum-done">0</div>
@@ -125,23 +125,27 @@
 
       <!-- Energy selector -->
       <div class="section-label">Your energy right now</div>
-      <div class="energy-row fu3" id="energy-row">
-        <button class="e-btn" data-e="high" onclick="setEnergy('high')">
-          <svg class="e-icon" viewBox="0 0 24 24" fill="none"><path d="M13 3L5 13h7l-1 8 8-10h-7l1-8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-          <span>High</span>
-        </button>
-        <button class="e-btn" data-e="medium" onclick="setEnergy('medium')">
-          <svg class="e-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><path d="M9 12h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          <span>Medium</span>
+      <div class="energy-grid fu3" id="energy-row">
+        <button class="e-btn" data-e="depleted" onclick="setEnergy('depleted')">
+          <svg class="e-icon" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Depleted</span>
         </button>
         <button class="e-btn" data-e="low" onclick="setEnergy('low')">
           <svg class="e-icon" viewBox="0 0 24 24" fill="none"><path d="M12 4v8M8 18c0-2.21 1.79-4 4-4s4 1.79 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           <span>Low</span>
         </button>
+        <button class="e-btn" data-e="medium" onclick="setEnergy('medium')">
+          <svg class="e-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><path d="M9 12h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span>Medium</span>
+        </button>
+        <button class="e-btn" data-e="high" onclick="setEnergy('high')">
+          <svg class="e-icon" viewBox="0 0 24 24" fill="none"><path d="M13 3L5 13h7l-1 8 8-10h-7l1-8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          <span>High</span>
+        </button>
       </div>
 
-      <!-- Area selector -->
-      <div class="section-label">Life area</div>
+      <!-- Neglected area selector -->
+      <div class="section-label">Neglected area</div>
       <div class="area-grid fu4" id="area-grid"></div>
       <button class="add-area-btn" onclick="openAddArea()">
         <svg viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -150,21 +154,30 @@
 
       <!-- Go button -->
       <button class="go-btn" id="go-btn" onclick="getAIRec()" disabled>
-        <span id="go-btn-txt">Pick energy level first</span>
+        <span id="go-btn-txt">Pick your energy first</span>
       </button>
 
       <!-- AI Recommendation card -->
       <div class="rec-card fu5" id="rec-card" style="display:none">
         <div class="rec-header">
           <span class="rec-label">Recommended action</span>
-          <button class="rec-refresh" onclick="getAIRec()" title="Get new recommendation">
+          <button class="rec-refresh" onclick="getAIRec()" title="New recommendation">
             <svg viewBox="0 0 20 20" fill="none"><path d="M4 10a6 6 0 0112 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16 10a6 6 0 01-12 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4 7l-.5 3-3-.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 13l.5-3 3 .5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
         </div>
         <div class="rec-body" id="rec-body">Loading…</div>
-        <div class="rec-duration" id="rec-duration"></div>
-        <div class="rec-timer-row" id="rec-timer-row" style="display:none">
-          <button class="timer-start-btn" id="timer-start-btn" onclick="startTimer()">Start timer</button>
+        <div class="rec-action-bar" id="rec-action-bar" style="display:none">
+          <div class="rec-time-pill">
+            <svg class="pill-icon" viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M10 7v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span id="rec-time-txt">25 min</span>
+          </div>
+          <button class="rec-focus-btn" id="timer-start-btn" onclick="startTimer()">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M6 4l12 6-12 6V4z" fill="currentColor"/></svg>
+            Start focus
+          </button>
         </div>
       </div>
 
@@ -236,9 +249,9 @@
   <!-- ADD AREA MODAL -->
   <div class="modal-overlay" id="add-area-modal" style="display:none" onclick="closeModal('add-area-modal')">
     <div class="modal-sheet" onclick="event.stopPropagation()">
-      <div class="modal-title">New life area</div>
+      <div class="modal-title">New neglected area</div>
       <input class="modal-input" id="area-name-in" type="text" placeholder="Area name (e.g. DSA prep)" maxlength="30"/>
-      <div class="modal-label">Emoji or icon</div>
+      <div class="modal-label">Icon</div>
       <div class="emoji-grid" id="emoji-grid"></div>
       <div class="modal-label">Tell the AI what this area is about <span class="required-badge">required</span></div>
       <textarea class="modal-textarea" id="area-context-in" placeholder="e.g. I'm preparing for Google interviews by solving one LeetCode problem daily. Focus on graphs, trees, and dynamic programming." rows="3" maxlength="200"></textarea>
