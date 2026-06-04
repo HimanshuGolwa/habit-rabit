@@ -75,7 +75,7 @@ class _TimerScreenState extends State<TimerScreen> {
     final ratio = _total > 0 ? _left / _total : 0.0;
 
     return Scaffold(
-      backgroundColor: p.bg.withOpacity(0.96),
+      backgroundColor: p.bg.withValues(alpha: 0.96),
       body: GlassBackground(
         child: SafeArea(
           child: Padding(

@@ -144,7 +144,7 @@ class HabitsScreen extends StatelessWidget {
                         height: 30,
                         decoration: BoxDecoration(
                           color: done
-                              ? AppColors.accent.withOpacity(0.2)
+                              ? AppColors.accent.withValues(alpha: 0.2)
                               : p.glassMd,
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.circular(15),
@@ -228,9 +228,9 @@ class HabitsScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppTheme.radiusSm),
           border: Border.all(
               color: danger
-                  ? AppColors.danger.withOpacity(0.2)
+                  ? AppColors.danger.withValues(alpha: 0.2)
                   : accent
-                      ? AppColors.accent.withOpacity(0.3)
+                      ? AppColors.accent.withValues(alpha: 0.3)
                       : p.glassBorder),
         ),
         alignment: Alignment.center,

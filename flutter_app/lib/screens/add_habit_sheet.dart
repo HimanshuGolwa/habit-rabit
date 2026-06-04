@@ -87,7 +87,7 @@ class _AddHabitSheetState extends State<_AddHabitSheet> {
                     const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
                 decoration: BoxDecoration(
                   color: active
-                      ? AppColors.accent.withOpacity(0.1)
+                      ? AppColors.accent.withValues(alpha: 0.1)
                       : p.glassMd,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(

@@ -1,8 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../services/app_state.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
 import 'home_screen.dart';
@@ -60,7 +58,7 @@ class _GlassNavBar extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
         child: Container(
           decoration: BoxDecoration(
-            color: p.bg.withOpacity(0.8),
+            color: p.bg.withValues(alpha: 0.8),
             border: Border(top: BorderSide(color: p.glassBorder)),
           ),
           padding: EdgeInsets.only(

@@ -185,7 +185,7 @@ class _HabitDetailState extends State<_HabitDetail> {
       final isToday = ds == todayStr;
       cells.add(Container(
         decoration: BoxDecoration(
-          color: done ? AppColors.accent.withOpacity(0.25) : p.glassMd,
+          color: done ? AppColors.accent.withValues(alpha: 0.25) : p.glassMd,
           borderRadius: BorderRadius.circular(6),
           border: isToday
               ? Border.all(color: AppColors.accent, width: 1.5)
@@ -237,7 +237,7 @@ class _HabitDetailState extends State<_HabitDetail> {
         width: 12,
         height: 12,
         decoration: BoxDecoration(
-          color: done ? AppColors.accent.withOpacity(0.5) : p.glassMd,
+          color: done ? AppColors.accent.withValues(alpha: 0.5) : p.glassMd,
           borderRadius: BorderRadius.circular(3),
         ),
       ));
@@ -283,7 +283,7 @@ class _HabitDetailState extends State<_HabitDetail> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
                 decoration: BoxDecoration(
-                  color: active ? c.withOpacity(0.15) : p.glassMd,
+                  color: active ? c.withValues(alpha: 0.15) : p.glassMd,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                       color: active ? c : p.glassBorder, width: 1.5),
@@ -375,7 +375,7 @@ class _HabitDetailState extends State<_HabitDetail> {
                                 horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
                               color: AppColors.energyColor(n.energy!)
-                                  .withOpacity(0.15),
+                                  .withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(n.energy!,

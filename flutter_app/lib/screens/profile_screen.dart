@@ -295,7 +295,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: Colors.white,
+            activeThumbColor: Colors.white,
             activeTrackColor: AppColors.accent,
           ),
         ],

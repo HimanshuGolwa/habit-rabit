@@ -76,7 +76,7 @@ class _AddAreaSheetState extends State<_AddAreaSheet> {
                 height: 44,
                 decoration: BoxDecoration(
                   color: active
-                      ? AppColors.accent.withOpacity(0.12)
+                      ? AppColors.accent.withValues(alpha: 0.12)
                       : p.glassMd,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(

@@ -29,7 +29,7 @@ class GlassCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = GlassPalette.of(Theme.of(context).brightness);
     final fill = active
-        ? AppColors.accent.withOpacity(0.10)
+        ? AppColors.accent.withValues(alpha: 0.10)
         : (tint ?? p.glass);
     final border = active ? AppColors.accent : p.glassBorder;
 
@@ -45,7 +45,7 @@ class GlassCard extends StatelessWidget {
             border: Border.all(color: border, width: active ? 1.4 : 1),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(
+                color: Colors.black.withValues(alpha: 
                     Theme.of(context).brightness == Brightness.dark ? 0.4 : 0.12),
                 blurRadius: 28,
                 offset: const Offset(0, 4),
@@ -56,7 +56,7 @@ class GlassCard extends StatelessWidget {
           foregroundDecoration: BoxDecoration(
             borderRadius: BorderRadius.circular(radius),
             border: Border(
-              top: BorderSide(color: p.glassShine.withOpacity(0.5), width: 1),
+              top: BorderSide(color: p.glassShine.withValues(alpha: 0.5), width: 1),
             ),
           ),
           child: child,
@@ -100,7 +100,7 @@ class GradientButton extends StatelessWidget {
             boxShadow: enabled
                 ? [
                     BoxShadow(
-                      color: AppColors.accent.withOpacity(0.35),
+                      color: AppColors.accent.withValues(alpha: 0.35),
                       blurRadius: 24,
                       offset: const Offset(0, 6),
                     ),
@@ -150,7 +150,7 @@ class GlassBackground extends StatelessWidget {
                   center: const Alignment(-0.7, -0.85),
                   radius: 1.1,
                   colors: [
-                    AppColors.accent.withOpacity(0.18),
+                    AppColors.accent.withValues(alpha: 0.18),
                     Colors.transparent,
                   ],
                 ),
@@ -164,7 +164,7 @@ class GlassBackground extends StatelessWidget {
                   center: const Alignment(0.8, 0.6),
                   radius: 1.0,
                   colors: [
-                    AppColors.accent2.withOpacity(0.14),
+                    AppColors.accent2.withValues(alpha: 0.14),
                     Colors.transparent,
                   ],
                 ),

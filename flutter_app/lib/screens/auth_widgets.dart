@@ -109,9 +109,9 @@ class AuthError extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
       decoration: BoxDecoration(
-        color: AppColors.danger.withOpacity(0.1),
+        color: AppColors.danger.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.danger.withOpacity(0.25)),
+        border: Border.all(color: AppColors.danger.withValues(alpha: 0.25)),
       ),
       child: Text(message,
           style: const TextStyle(

@@ -471,9 +471,9 @@ class _HomeScreenState extends State<HomeScreen> {
               padding:
                   const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
               decoration: BoxDecoration(
-                color: AppColors.accent.withOpacity(0.1),
+                color: AppColors.accent.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.accent.withOpacity(0.25)),
+                border: Border.all(color: AppColors.accent.withValues(alpha: 0.25)),
               ),
               child: Row(
                 children: [
@@ -536,7 +536,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 9),
                   decoration: BoxDecoration(
                     color: (active || isRec)
-                        ? AppColors.accent.withOpacity(0.12)
+                        ? AppColors.accent.withValues(alpha: 0.12)
                         : p.glass,
                     borderRadius: BorderRadius.circular(11),
                     border: Border.all(
@@ -609,10 +609,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 9, vertical: 3),
                       decoration: BoxDecoration(
-                        color: AppColors.accent.withOpacity(0.1),
+                        color: AppColors.accent.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                         border:
-                            Border.all(color: AppColors.accent.withOpacity(0.2)),
+                            Border.all(color: AppColors.accent.withValues(alpha: 0.2)),
                       ),
                       child: Text(_fmt(alt.minutes),
                           style: const TextStyle(
