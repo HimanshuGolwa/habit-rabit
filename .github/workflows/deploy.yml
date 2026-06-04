@@ -1,0 +1,73 @@
+name: Deploy Flutter web to GitHub Pages
+
+# Builds flutter_app/ and publishes it to GitHub Pages.
+# Trigger: pushes to flutter-migration (so we can test the Flutter build),
+# plus a manual "Run workflow" button.
+on:
+  push:
+    branches: [flutter-migration]
+  workflow_dispatch:
+
+# GitHub Pages deployment needs these permissions.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deploy; cancel older in-progress runs.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: flutter_app
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          # Pin a known-good version for reproducible builds.
+          flutter-version: '3.24.5'
+
+      - name: Show Flutter version
+        run: flutter --version
+
+      # The android/ios/web platform folders are gitignored, so regenerate
+      # the web scaffolding (index.html, etc.) without touching lib/ or assets/.
+      - name: Generate web platform files
+        run: flutter create . --platforms=web
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Surface analyzer issues in the logs (non-blocking).
+      - name: Analyze
+        run: flutter analyze || true
+
+      # base-href MUST match the repo name so assets resolve under
+      # https://<user>.github.io/habit-rabit/
+      - name: Build web
+        run: flutter build web --release --base-href /habit-rabit/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: flutter_app/build/web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
