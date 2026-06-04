@@ -20,8 +20,9 @@ class AuthUser {
 }
 
 class AuthService {
-  // TODO: set to your deployed Railway URL in production.
-  static const String apiBase = 'http://localhost:3000';
+  // Live backend on Railway — reachable from web, mobile, and local dev.
+  // For local-backend testing, swap to 'http://localhost:3000'.
+  static const String apiBase = 'https://habit-rabit-production.up.railway.app';
 
   static const _sessionKey = 'session';
   static const _accessKey = 'access';
