@@ -1,0 +1,39 @@
+name: habit_rabit
+description: Habit Rabit — your daily action coach. Flutter app for iOS, Android, and web.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+  provider: ^6.1.1            # state management
+  shared_preferences: ^2.2.2 # local persistence (mirrors localStorage)
+  http: ^1.2.0               # API calls (backend integration)
+  geolocator: ^11.0.0        # weather location
+  intl: ^0.19.0             # date formatting
+
+dev_dependencies:
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/rec_pool.json
+  # To match the web app's typography exactly, drop Google Sans /
+  # Google Sans Display .ttf files into assets/fonts/ and uncomment below.
+  # Without them the app falls back to the platform default font.
+  # fonts:
+  #   - family: GoogleSans
+  #     fonts:
+  #       - asset: assets/fonts/GoogleSans-Regular.ttf
+  #       - asset: assets/fonts/GoogleSans-Medium.ttf
+  #         weight: 500
+  #   - family: GoogleSansDisplay
+  #     fonts:
+  #       - asset: assets/fonts/GoogleSansDisplay-Regular.ttf
+  #       - asset: assets/fonts/GoogleSansDisplay-Medium.ttf
+  #         weight: 500
