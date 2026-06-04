@@ -1,8 +1,8 @@
 // ── API CONFIG ────────────────────────────────────────
-// Swap this URL after deploying to Railway
+// Live backend on Railway; localhost for local dev.
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
   ? 'http://localhost:3000'
-  : 'https://habit-rabit-api.up.railway.app';
+  : 'https://habit-rabit-production.up.railway.app';
 
 // ── SESSION MANAGEMENT ───────────────────────────────
 const Auth = {
