@@ -6,9 +6,10 @@ build/
 .flutter-plugins-dependencies
 pubspec.lock
 
-# Generated platform folders (run `flutter create .` to regenerate)
-# Keep these ignored until you commit platform-specific config.
-android/
+# android/ is committed — it holds real config (app id, name, permissions).
+# Its own android/.gitignore still excludes build artifacts, local.properties, keys.
+
+# Generated platform folders we don't customize yet (CI regenerates web/).
 ios/
 web/
 windows/
